@@ -30,7 +30,7 @@ Test GET /api/users/memberof
     Should Not Be Empty     ${data}
 
 
-Test POST /api/users{userid}
+Test POST /api/users/{userid}
     &{headers}=     Create Dictionary   Content-Type=application/json
     &{user}=    Create Dictionary   cn=张三     sn=张    givenName=三   admin=False     accountType=user
     ${resp}=    Post Request    ${USERS_SESSION}    /api/users/zhangsan     data=${user}    headers=${headers}
