@@ -1,0 +1,668 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 3.2.2 (Python 3.7.3 on linux)" generated="20200916 18:36:10.448" rpa="false">
+<suite id="s1" name="Users" source="/home/ted/my-github/aut0test/autotest/robot/ldapman/users.robot">
+<test id="s1-t1" name="Test GET /api/users/me">
+<kw name="Create Oauth2 Session" library="auth" type="setup">
+<arguments>
+<arg>${USERS_SESSION}</arg>
+<arg>${USERNAME}</arg>
+<arg>${PASSWORD}</arg>
+</arguments>
+<kw name="Get Oauth2 Token" library="auth">
+<arguments>
+<arg>${username}</arg>
+<arg>${password}</arg>
+</arguments>
+<assign>
+<var>${token}</var>
+</assign>
+<kw name="Create Dictionary" library="BuiltIn">
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<arguments>
+<arg>Content-Type=application/x-www-form-urlencoded</arg>
+</arguments>
+<assign>
+<var>${headers}</var>
+</assign>
+<msg timestamp="20200916 18:36:10.527" level="INFO">${headers} = {'Content-Type': 'application/x-www-form-urlencoded'}</msg>
+<status status="PASS" starttime="20200916 18:36:10.527" endtime="20200916 18:36:10.527"></status>
+</kw>
+<kw name="Create Dictionary" library="BuiltIn">
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<arguments>
+<arg>username=${username}</arg>
+<arg>password=${password}</arg>
+</arguments>
+<assign>
+<var>${form_data}</var>
+</assign>
+<msg timestamp="20200916 18:36:10.528" level="INFO">${form_data} = {'username': 'zhangpeng', 'password': 'zhangpeng'}</msg>
+<status status="PASS" starttime="20200916 18:36:10.527" endtime="20200916 18:36:10.528"></status>
+</kw>
+<kw name="Create Session" library="RequestsLibrary">
+<doc>Create Session: create a HTTP session to a server</doc>
+<arguments>
+<arg>token_session</arg>
+<arg>${BACKEND}</arg>
+</arguments>
+<msg timestamp="20200916 18:36:10.528" level="INFO">Creating Session using : alias=token_session, url=http://172.16.66.6:8000, headers={},                     cookies={}, auth=None, timeout=None, proxies=None, verify=False,                     debug=0 </msg>
+<status status="PASS" starttime="20200916 18:36:10.528" endtime="20200916 18:36:10.528"></status>
+</kw>
+<kw name="Post Request" library="RequestsLibrary">
+<doc>Send a POST request on the session object found using the
+given `alias`</doc>
+<arguments>
+<arg>token_session</arg>
+<arg>${TOKEN_API}</arg>
+<arg>data=${form_data}</arg>
+<arg>headers=${headers}</arg>
+</arguments>
+<assign>
+<var>${resp}</var>
+</assign>
+<msg timestamp="20200916 18:36:10.702" level="INFO">POST Request : url=http://172.16.66.6:8000/api/token 
+ path_url=/api/token 
+ headers={'User-Agent': 'python-requests/2.24.0', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Type': 'application/x-www-form-urlencoded', 'Content-Length': '37'} 
+ body=username=zhangpeng&amp;password=zhangpeng 
+ </msg>
+<msg timestamp="20200916 18:36:10.703" level="INFO">POST Response : url=http://172.16.66.6:8000/api/token 
+ status=200, reason=OK 
+ body={"access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ6aGFuZ3BlbmciLCJleHAiOjE2MDAyNTYxNzB9.oLosL7k3mY1x5bbakZp07sMAIJYR0GC1_MxscV75L5M","token_type":"bearer","admin":true} 
+ </msg>
+<msg timestamp="20200916 18:36:10.703" level="INFO">${resp} = &lt;Response [200]&gt;</msg>
+<status status="PASS" starttime="20200916 18:36:10.528" endtime="20200916 18:36:10.703"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.loads("""${resp.text}""")</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>&amp;{data}</var>
+</assign>
+<msg timestamp="20200916 18:36:10.705" level="INFO">&amp;{data} = { access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ6aGFuZ3BlbmciLCJleHAiOjE2MDAyNTYxNzB9.oLosL7k3mY1x5bbakZp07sMAIJYR0GC1_MxscV75L5M | token_type=bearer | admin=True }</msg>
+<status status="PASS" starttime="20200916 18:36:10.703" endtime="20200916 18:36:10.705"></status>
+</kw>
+<msg timestamp="20200916 18:36:10.706" level="INFO">${token} = Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ6aGFuZ3BlbmciLCJleHAiOjE2MDAyNTYxNzB9.oLosL7k3mY1x5bbakZp07sMAIJYR0GC1_MxscV75L5M</msg>
+<status status="PASS" starttime="20200916 18:36:10.527" endtime="20200916 18:36:10.706"></status>
+</kw>
+<kw name="Create Dictionary" library="BuiltIn">
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<arguments>
+<arg>Authorization=${token}</arg>
+</arguments>
+<assign>
+<var>${headers}</var>
+</assign>
+<msg timestamp="20200916 18:36:10.707" level="INFO">${headers} = {'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ6aGFuZ3BlbmciLCJleHAiOjE2MDAyNTYxNzB9.oLosL7k3mY1x5bbakZp07sMAIJYR0GC1_MxscV75L5M'}</msg>
+<status status="PASS" starttime="20200916 18:36:10.706" endtime="20200916 18:36:10.707"></status>
+</kw>
+<kw name="Create Session" library="RequestsLibrary">
+<doc>Create Session: create a HTTP session to a server</doc>
+<arguments>
+<arg>${session_name}</arg>
+<arg>${BACKEND}</arg>
+<arg>headers=${headers}</arg>
+</arguments>
+<msg timestamp="20200916 18:36:10.708" level="INFO">Creating Session using : alias=current_session, url=http://172.16.66.6:8000, headers={'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ6aGFuZ3BlbmciLCJleHAiOjE2MDAyNTYxNzB9.oLosL7k3mY1x5bbakZp07sMAIJYR0GC1_MxscV75L5M'},                     cookies={}, auth=None, timeout=None, proxies=None, verify=False,                     debug=0 </msg>
+<status status="PASS" starttime="20200916 18:36:10.707" endtime="20200916 18:36:10.709"></status>
+</kw>
+<status status="PASS" starttime="20200916 18:36:10.526" endtime="20200916 18:36:10.709"></status>
+</kw>
+<kw name="Get Request" library="RequestsLibrary">
+<doc>Send a GET request on the session object found using the
+given `alias`</doc>
+<arguments>
+<arg>${USERS_SESSION}</arg>
+<arg>/api/users/me</arg>
+</arguments>
+<assign>
+<var>${resp}</var>
+</assign>
+<msg timestamp="20200916 18:36:10.853" level="INFO">GET Request : url=http://172.16.66.6:8000/api/users/me 
+ path_url=/api/users/me 
+ headers={'User-Agent': 'python-requests/2.24.0', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ6aGFuZ3BlbmciLCJleHAiOjE2MDAyNTYxNzB9.oLosL7k3mY1x5bbakZp07sMAIJYR0GC1_MxscV75L5M'} 
+ body=None 
+ </msg>
+<msg timestamp="20200916 18:36:10.867" level="INFO">GET Response : url=http://172.16.66.6:8000/api/users/me 
+ status=200, reason=OK 
+ body={"objectClass":["inetOrgPerson","shadowAccount","amavisAccount","mailUser","posixAccount"],"amavisLocal":true,"enabledService":["mail","deliver","lda","lmtp","smtp","smtpsecured","pop3","pop3secured","pop3tls","imap","imapsecured","imaptls","managesieve","managesievesecured","sogo","sieve","sievesecured","forward","senderbcc","recipientbcc","internal","lib-storage","indexer-worker","doveadm","dsync","shadowaddress","displayedInGlobalAddressBook","domainadmin"],"homeDirectory":"/var/vmail/vmail1/cetcxl.com/zhangpeng/","mail":"zhangpeng@cetcxl.com","mailboxFormat":"maildir","mailMessageStore":"vmail1/cetcxl.com/zhangpeng/","storageBaseDirectory":"/var/vmail","uid":"zhangpeng","shadowAddress":"zhangp@cetcxl.com","domainGlobalAdmin":"yes","preferredLanguage":"zh_CN","accountStatus":"active","mailQuota":5368709120,"shadowMax":-1,"loginShell":"/bin/bash","shadowLastChange":18221,"uidNumber":6000,"gidNumber":60,"cn":"张鹏","sn":"张","givenName":"鹏","displayName":"张鹏","dn":"mail=zhangpeng@cetcxl.com,ou=Users,domainName=cetcxl.com,o=domains,dc=cetcxl,dc=com","memberof":[{"group":"admin","pgroup":"jenkins"},{"group":"user","pgroup":"jenkins"},{"group":"user","pgroup":"qa_jenkins"},{"group":"admin","pgroup":"qa_jenkins"},{"group":"jira-managers","pgroup":"jira"},{"group":"运维","pgroup":"xl"},{"group":"全员","pgroup":"xl"},{"group":"项目实施部","pgroup":"xl"}]} 
+ </msg>
+<msg timestamp="20200916 18:36:10.867" level="INFO">${resp} = &lt;Response [200]&gt;</msg>
+<status status="PASS" starttime="20200916 18:36:10.709" endtime="20200916 18:36:10.867"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.loads("""${resp.text}""")</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>&amp;{data}</var>
+</assign>
+<msg timestamp="20200916 18:36:10.875" level="INFO">&amp;{data} = { objectClass=['inetOrgPerson', 'shadowAccount', 'amavisAccount', 'mailUser', 'posixAccount'] | amavisLocal=True | enabledService=['mail', 'deliver', 'lda', 'lmtp', 'smtp', 'smtpsecured', 'pop3', 'pop...</msg>
+<status status="PASS" starttime="20200916 18:36:10.867" endtime="20200916 18:36:10.875"></status>
+</kw>
+<kw name="Log" library="BuiltIn">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>${data.uid}</arg>
+</arguments>
+<msg timestamp="20200916 18:36:10.875" level="INFO">zhangpeng</msg>
+<status status="PASS" starttime="20200916 18:36:10.875" endtime="20200916 18:36:10.875"></status>
+</kw>
+<kw name="Should Be Equal" library="BuiltIn">
+<doc>Fails if the given objects are unequal.</doc>
+<arguments>
+<arg>${data.uid}</arg>
+<arg>${USERNAME}</arg>
+</arguments>
+<status status="PASS" starttime="20200916 18:36:10.875" endtime="20200916 18:36:10.876"></status>
+</kw>
+<status status="PASS" starttime="20200916 18:36:10.526" endtime="20200916 18:36:10.876" critical="yes"></status>
+</test>
+<test id="s1-t2" name="Test GET /api/users">
+<kw name="Create Oauth2 Session" library="auth" type="setup">
+<arguments>
+<arg>${USERS_SESSION}</arg>
+<arg>${USERNAME}</arg>
+<arg>${PASSWORD}</arg>
+</arguments>
+<kw name="Get Oauth2 Token" library="auth">
+<arguments>
+<arg>${username}</arg>
+<arg>${password}</arg>
+</arguments>
+<assign>
+<var>${token}</var>
+</assign>
+<kw name="Create Dictionary" library="BuiltIn">
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<arguments>
+<arg>Content-Type=application/x-www-form-urlencoded</arg>
+</arguments>
+<assign>
+<var>${headers}</var>
+</assign>
+<msg timestamp="20200916 18:36:10.878" level="INFO">${headers} = {'Content-Type': 'application/x-www-form-urlencoded'}</msg>
+<status status="PASS" starttime="20200916 18:36:10.877" endtime="20200916 18:36:10.878"></status>
+</kw>
+<kw name="Create Dictionary" library="BuiltIn">
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<arguments>
+<arg>username=${username}</arg>
+<arg>password=${password}</arg>
+</arguments>
+<assign>
+<var>${form_data}</var>
+</assign>
+<msg timestamp="20200916 18:36:10.878" level="INFO">${form_data} = {'username': 'zhangpeng', 'password': 'zhangpeng'}</msg>
+<status status="PASS" starttime="20200916 18:36:10.878" endtime="20200916 18:36:10.878"></status>
+</kw>
+<kw name="Create Session" library="RequestsLibrary">
+<doc>Create Session: create a HTTP session to a server</doc>
+<arguments>
+<arg>token_session</arg>
+<arg>${BACKEND}</arg>
+</arguments>
+<msg timestamp="20200916 18:36:10.878" level="INFO">Creating Session using : alias=token_session, url=http://172.16.66.6:8000, headers={},                     cookies={}, auth=None, timeout=None, proxies=None, verify=False,                     debug=0 </msg>
+<status status="PASS" starttime="20200916 18:36:10.878" endtime="20200916 18:36:10.879"></status>
+</kw>
+<kw name="Post Request" library="RequestsLibrary">
+<doc>Send a POST request on the session object found using the
+given `alias`</doc>
+<arguments>
+<arg>token_session</arg>
+<arg>${TOKEN_API}</arg>
+<arg>data=${form_data}</arg>
+<arg>headers=${headers}</arg>
+</arguments>
+<assign>
+<var>${resp}</var>
+</assign>
+<msg timestamp="20200916 18:36:11.084" level="INFO">POST Request : url=http://172.16.66.6:8000/api/token 
+ path_url=/api/token 
+ headers={'User-Agent': 'python-requests/2.24.0', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Type': 'application/x-www-form-urlencoded', 'Content-Length': '37'} 
+ body=username=zhangpeng&amp;password=zhangpeng 
+ </msg>
+<msg timestamp="20200916 18:36:11.084" level="INFO">POST Response : url=http://172.16.66.6:8000/api/token 
+ status=200, reason=OK 
+ body={"access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ6aGFuZ3BlbmciLCJleHAiOjE2MDAyNTYxNzB9.oLosL7k3mY1x5bbakZp07sMAIJYR0GC1_MxscV75L5M","token_type":"bearer","admin":true} 
+ </msg>
+<msg timestamp="20200916 18:36:11.085" level="INFO">${resp} = &lt;Response [200]&gt;</msg>
+<status status="PASS" starttime="20200916 18:36:10.879" endtime="20200916 18:36:11.085"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.loads("""${resp.text}""")</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>&amp;{data}</var>
+</assign>
+<msg timestamp="20200916 18:36:11.086" level="INFO">&amp;{data} = { access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ6aGFuZ3BlbmciLCJleHAiOjE2MDAyNTYxNzB9.oLosL7k3mY1x5bbakZp07sMAIJYR0GC1_MxscV75L5M | token_type=bearer | admin=True }</msg>
+<status status="PASS" starttime="20200916 18:36:11.085" endtime="20200916 18:36:11.087"></status>
+</kw>
+<msg timestamp="20200916 18:36:11.087" level="INFO">${token} = Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ6aGFuZ3BlbmciLCJleHAiOjE2MDAyNTYxNzB9.oLosL7k3mY1x5bbakZp07sMAIJYR0GC1_MxscV75L5M</msg>
+<status status="PASS" starttime="20200916 18:36:10.877" endtime="20200916 18:36:11.087"></status>
+</kw>
+<kw name="Create Dictionary" library="BuiltIn">
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<arguments>
+<arg>Authorization=${token}</arg>
+</arguments>
+<assign>
+<var>${headers}</var>
+</assign>
+<msg timestamp="20200916 18:36:11.088" level="INFO">${headers} = {'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ6aGFuZ3BlbmciLCJleHAiOjE2MDAyNTYxNzB9.oLosL7k3mY1x5bbakZp07sMAIJYR0GC1_MxscV75L5M'}</msg>
+<status status="PASS" starttime="20200916 18:36:11.088" endtime="20200916 18:36:11.089"></status>
+</kw>
+<kw name="Create Session" library="RequestsLibrary">
+<doc>Create Session: create a HTTP session to a server</doc>
+<arguments>
+<arg>${session_name}</arg>
+<arg>${BACKEND}</arg>
+<arg>headers=${headers}</arg>
+</arguments>
+<msg timestamp="20200916 18:36:11.090" level="INFO">Creating Session using : alias=current_session, url=http://172.16.66.6:8000, headers={'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ6aGFuZ3BlbmciLCJleHAiOjE2MDAyNTYxNzB9.oLosL7k3mY1x5bbakZp07sMAIJYR0GC1_MxscV75L5M'},                     cookies={}, auth=None, timeout=None, proxies=None, verify=False,                     debug=0 </msg>
+<status status="PASS" starttime="20200916 18:36:11.089" endtime="20200916 18:36:11.090"></status>
+</kw>
+<status status="PASS" starttime="20200916 18:36:10.876" endtime="20200916 18:36:11.090"></status>
+</kw>
+<kw name="Get Request" library="RequestsLibrary">
+<doc>Send a GET request on the session object found using the
+given `alias`</doc>
+<arguments>
+<arg>${USERS_SESSION}</arg>
+<arg>/api/users</arg>
+</arguments>
+<assign>
+<var>${resp}</var>
+</assign>
+<msg timestamp="20200916 18:36:11.381" level="INFO">GET Request : url=http://172.16.66.6:8000/api/users (redirected) 
+ path_url=/api/users 
+ headers={'User-Agent': 'python-requests/2.24.0', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ6aGFuZ3BlbmciLCJleHAiOjE2MDAyNTYxNzB9.oLosL7k3mY1x5bbakZp07sMAIJYR0GC1_MxscV75L5M'} 
+ body=None 
+ </msg>
+<msg timestamp="20200916 18:36:11.664" level="INFO">GET Response : url=http://172.16.66.6:8000/api/users/ 
+ status=200, reason=OK 
+ body=[{"objectClass":["inetOrgPerson","mailUser","shadowAccount","amavisAccount","posixAccount"],"mail":"zhouzhaocai@cetcxl.com","uid":"zhouzhaocai","storageBaseDirectory":"/var/vmail","mailMessageStore":"vmail1/cetcxl.com/zhouzhaocai/","homeDirectory":"/var/vmail/vmail1/cetcxl.com/zhouzhaocai/","accountStatus":"active","enabledService":["mail","deliver","lda","lmtp","smtp","smtpsecured","pop3","pop3secured","pop3tls","imap","imapsecured","imaptls","managesieve","managesievesecured","sogo","sieve","sievesecured","forward","senderbcc","recipientbcc","internal","lib-storage","indexer-worker","doveadm","dsync","shadowaddress","displayedInGlobalAddressBook"],"amavisLocal":true,"mailQuota":5368709120,"mailboxFormat":"maildir","cn":"周昭财","displayName":"周昭财","sn":"周","givenName":"昭财","shadowLastChange":1574331005,"gidNumber":60,"shadowMax":-1,"loginShell":"/bin/bash","uidNumber":6003,"dn":"mail=zhouzhaocai@cetcxl.com,ou=Users,domainName=cetcxl.com,o=domains,dc=cetcxl,dc=com"},{"objectClass":["inetOrgPerson","mailUser","shadowAccount","amavisAccount","posixAccount"],"mail":"zengqinghai@cetcxl.com","storageBaseDirectory":"/var/vmail","mailMessageStore":"vmail1/cetcxl.com/zengqinghai/","homeDirectory":"/var/vmail/vmail1/cetcxl.com/zengqinghai/","accountStatus":"active","enabledService":["mail","deliver","lda","lmtp","smtp","smtpsecured","pop3","pop3secured","pop3tls","imap","imapsecured","imaptls","managesieve","managesievesecured","sogo","sieve","sievesecured","forward","senderbcc","recipientbcc","internal","lib-storage","indexer-worker","doveadm","dsync","shadowaddress","displayedInGlobalAddressBook"],"shadowLastChange":0,"amavisLocal":true,"mailboxFormat":"maildir","cn":"曾青海","uidNumber":19620,"gidNumber":19620,"displayName":"曾青海","mailQuota":5368709120,"uid":"zengqinghai","givenName":"青海","sn":"曾","dn":"mail=zengqinghai@cetcxl.com,ou=Users,domainName=cetcxl.com,o=domains,dc=cetcxl,dc=com"},{"objectClass":["inetOrgPerson","mailUser","shadowAccount","amavisAccount","posixAccount"],"mail":"yangjiaxing@cetcxl.com","uid":"yangjiaxing","storageBaseDirectory":"/var/vmail","mailMessageStore":"vmail1/cetcxl.com/yangjiaxing/","homeDirectory":"/var/vmail/vmail1/cetcxl.com/yangjiaxing/","enabledService":["mail","deliver","lda","lmtp","smtp","smtpsecured","pop3","pop3secured","pop3tls","imap","imapsecured","imaptls","managesieve","managesievesecured","sogo","sieve","sievesecured","forward","senderbcc","recipientbcc","internal","lib-storage","indexer-worker","doveadm","dsync","shadowaddress","displayedInGlobalAddressBook"],"shadowLastChange":0,"amavisLocal":true,"mailboxFormat":"maildir","cn":"杨家兴","accountStatus":"active","uidNumber":5041,"gidNumber":1,"displayName":"杨家兴","preferredLanguage":"zh_CN","mailQuota":5368709120,"givenName":"家兴","sn":"杨","dn":"mail=yangjiaxing@cetcxl.com,ou=Users,domainName=cetcxl.com,o=domains,dc=cetcxl,dc=com"},{"objectClass":["inetOrgPerson","mailUser","shadowAccount","amavisAccount","posixAccount"],"mail":"yangchunxia@cetcxl.com","uid":"yangchunxia","storageBaseDirectory":"/var/vmail","mailMessageStore":"vmail1/cetcxl.com/yangchunxia/","homeDirectory":"/var/vmail/vmail1/cetcxl.com/yangchunxia/","enabledService":["mail","deliver","lda","lmtp","smtp","smtpsecured","pop3","pop3secured","pop3tls","imap","imapsecured","imaptls","managesieve","managesievesecured","sogo","sieve","sievesecured","forward","senderbcc","recipientbcc","internal","lib-storage","indexer-worker","doveadm","dsync","shadowaddress","displayedInGlobalAddressBook"],"shadowLastChange":0,"amavisLocal":true,"mailboxFormat":"maildir","cn":"杨春霞","preferredLanguage":"en_US","mailQuota":5368709120,"accountStatus":"active","uidNumber":201909161,"gidNumber":1,"displayName":"杨春霞","givenName":"春霞","sn":"杨","dn":"mail=yangchunxia@cetcxl.com,ou=Users,domainName=cetcxl.com,o=domains,dc=cetcxl,dc=com"},{"objectClass":["inetOrgPerson","mailUser","shadowAccount","amavisAccount","posixAccount"],"mail":"wangfangrui@cetcxl.com","uid":"wangfangrui","storageBaseDirectory":"/var/vmail","mailMessageStore":"vmail1/cetcxl.com/wangfangrui/","homeDirectory":"/var/vmail/vmail1/cetcxl.com/wangfangrui/","enabledService":["mail","deliver","lda","lmtp","smtp","smtpsecured","pop3","pop3secured","pop3tls","imap","imapsecured","imaptls","managesieve","managesievesecured","sogo","sieve","sievesecured","forward","senderbcc","recipientbcc","internal","lib-storage","indexer-worker","doveadm","dsync","shadowaddress","displayedInGlobalAddressBook"],"shadowLastChange":0,"amavisLocal":true,"mailboxFormat":"maildir","cn":"王方锐","accountStatus":"active","preferredLanguage":"zh_CN","displayName":"王方锐","uidNumber":201905051,"gidNumber":1,"mailQuota":5368709120,"givenName":"方锐","sn":"王","dn":"mail=wangfangrui@cetcxl.com,ou=Users,domainName=cetcxl.com,o=domains,dc=cetcxl,dc=com"},{"objectClass":["inetOrgPerson","shadowAccount","amavisAccount","mailUser","posixAccount"],"accountStatus":"active","amavisLocal":true,"cn":"刘尚麟","displayName":"刘尚麟","enabledService":["mail","deliver","lda","lmtp","smtp","smtpsecured","pop3","pop3secured","pop3tls","imap","imapsecured","imaptls","managesieve","managesievesecured","sogo","sieve","sievesecured","forward","senderbcc","recipientbcc","internal","lib-storage","indexer-worker","doveadm","dsync","shadowaddress","displayedInGlobalAddressBook"],"gidNumber":1,"homeDirectory":"/var/vmail/vmail1/cetcxl.com/liushanglin/","mail":"liushanglin@cetcxl.com","mailboxFormat":"maildir","mailMessageStore":"vmail1/cetcxl.com/liushanglin/","preferredLanguage":"zh_CN","shadowLastChange":0,"storageBaseDirectory":"/var/vmail","uid":"liushanglin","uidNumber":5028,"shadowAddress":"liusl@cetcxl.com","mailQuota":5368709120,"givenName":"尚麟","sn":"刘","dn":"mail=liushanglin@cetcxl.com,ou=Users,domainName=cetcxl.com,o=domains,dc=cetcxl,dc=com"},{"objectClass":["inetOrgPerson","shadowAccount","amavisAccount","mailUser","posixAccount"],"accountStatus":"active","amavisLocal":true,"cn":"陈媛君","displayName":"陈媛君","enabledService":["mail","deliver","lda","lmtp","smtp","smtpsecured","pop3","pop3secured","pop3tls","imap","imapsecured","imaptls","managesieve","managesievesecured","sogo","sieve","sievesecured","forward","senderbcc","recipientbcc","internal","lib-storage","indexer-worker","doveadm","dsync","shadowaddress","displayedInGlobalAddressBook"],"gidNumber":1,"homeDirectory":"/var/vmail/vmail1/cetcxl.com/chenyuanjun/","mail":"chenyuanjun@cetcxl.com","mailboxFormat":"maildir","mailMessageStore":"vmail1/cetcxl.com/chenyuanjun/","preferredLanguage":"zh_CN","shadowLastChange":0,"storageBaseDirectory":"/var/vmail","uid":"chenyuanjun","uidNumber":5021,"mailQuota":5368709120,"givenName":"媛君","sn":"陈","dn":"mail=chenyuanjun@cetcxl.com,ou=Users,domainName=cetcxl.com,o=domains,dc=cetcxl,dc=com"},{"objectClass":["inetOrgPerson","shadowAccount","amavisAccount","mailUser","posixAccount"],"amavisLocal":true,"displayName":"安红章","enabledService":["mail","deliver","lda","lmtp","smtp","smtpsecured","pop3","pop3secured","pop3tls","imap","imapsecured","imaptls","managesieve","managesievesecured","sogo","sieve","sievesecured","forward","senderbcc","recipientbcc","internal","lib-storage","indexer-worker","doveadm","dsync","shadowaddress","displayedInGlobalAddressBook"],"gidNumber":1,"homeDirectory":"/var/vmail/vmail1/cetcxl.com/anhongzhang/","mail":"anhongzhang@cetcxl.com","mailboxFormat":"maildir","mailMessageStore":"vmail1/cetcxl.com/anhongzhang/","shadowLastChange":0,"storageBaseDirectory":"/var/vmail","uid":"anhongzhang","uidNumber":5023,"shadowAddress":"anhz@cetcxl.com","cn":"安红章","preferredLanguage":"zh_CN","accountStatus":"active","mailQuota":5368709120,"givenName":"红章","sn":"安","dn":"mail=anhongzhang@cetcxl.com,ou=Users,domainName=cetcxl.com,o=domains,dc=cetcxl,dc=com"},{"objectClass":["inetOrgPerson","shadowAccount","amavisAccount","mailUser","posixAccount"],"accountStatus":"active","amavisLocal":true,"cn":"颜亚光","displayName":"颜亚光","enabledService":["mail","deliver","lda","lmtp","smtp","smtpsecured","pop3","pop3secured","pop3tls","imap","imapsecured","imaptls","managesieve","managesievesecured","sogo","sieve","sievesecured","forward","senderbcc","recipientbcc","internal","lib-storage","indexer-worker","doveadm","dsync","shadowaddress","displayedInGlobalAddressBook"],"gidNumber":1,"homeDirectory":"/var/vmail/vmail1/cetcxl.com/yanyaguang/","mail":"yanyaguang@cetcxl.com","mailboxFormat":"maildir","mailMessageStore":"vmail1/cetcxl.com/yanyaguang/","preferredLanguage":"zh_CN","shadowLastChange":0,"storageBaseDirectory":"/var/vmail","uid":"yanyaguang","uidNumber":5005,"mailQuota":5368709120,"givenName":"亚光","sn":"颜","dn":"mail=yanyaguang@cetcxl.com,ou=Users,domainName=cetcxl.com,o=domains,dc=cetcxl,dc=com"},{"objectClass":["inetOrgPerson","shadowAccount","amavisAccount","mailUser","posixAccount"],"amavisLocal":true,"displayName":"杨艳梅","enabledService":["mail","deliver","lda","lmtp","smtp","smtpsecured","pop3","pop3secured","pop3tls","imap","imapsecured","imaptls","managesieve","managesievesecured","sogo","sieve","sievesecured","forward","senderbcc","recipientbcc","internal","lib-storage","indexer-worker","doveadm","dsync","shadowaddress","displayedInGlobalAddressBook"],"gidNumber":1,"homeDirectory":"/var/vmail/vmail1/cetcxl.com/yangyanmei/","mail":"yangyanmei@cetcxl.com","mailboxFormat":"maildir","mailMessageStore":"vmail1/cetcxl.com/yangyanmei/","shadowLastChange":0,"storageBaseDirectory":"/var/vmail","uid":"yangyanmei","uidNumber":5017,"shadowAddress":"yangym@cetcxl.com","cn":"杨艳梅","preferredLanguage":"zh_CN","accountStatus":"active","mailQuota":5368709120,"givenName":"艳梅","sn":"杨","dn":"mail=yangyanmei@cetcxl.com,ou=Users,domainName=cetcxl.com,o=domains,dc=cetcxl,dc=com"},{"objectClass":["inetOrgPerson","mailUser","shadowAccount","amavisAccount","posixAccount"],"mail":"wangchunhu@cetcxl.com","storageBaseDirectory":"/var/vmail","mailMessageStore":"vmail1/cetcxl.com/wangchunhu/","homeDirectory":"/var/vmail/vmail1/cetcxl.com/wangchunhu/","accountStatus":"active","enabledService":["mail","deliver","lda","... (set the log level to DEBUG or TRACE to see the full content) 
+ </msg>
+<msg timestamp="20200916 18:36:11.665" level="INFO">${resp} = &lt;Response [200]&gt;</msg>
+<status status="PASS" starttime="20200916 18:36:11.091" endtime="20200916 18:36:11.665"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.loads("""${resp.text}""")</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>@{data}</var>
+</assign>
+<msg timestamp="20200916 18:36:11.950" level="INFO">@{data} = [ {'objectClass': ['inetOrgPerson', 'mailUser', 'shadowAccount', 'amavisAccount', 'posixAccount'], 'mail': 'zhouzhaocai@cetcxl.com', 'uid': 'zhouzhaocai', 'storageBaseDirectory': '/var/vmail', 'mailMe...</msg>
+<status status="PASS" starttime="20200916 18:36:11.665" endtime="20200916 18:36:11.950"></status>
+</kw>
+<kw name="Get Length" library="BuiltIn">
+<doc>Returns and logs the length of the given item as an integer.</doc>
+<arguments>
+<arg>${data}</arg>
+</arguments>
+<assign>
+<var>${current_users}</var>
+</assign>
+<msg timestamp="20200916 18:36:11.951" level="INFO">Length is 82</msg>
+<msg timestamp="20200916 18:36:11.951" level="INFO">${current_users} = 82</msg>
+<status status="PASS" starttime="20200916 18:36:11.951" endtime="20200916 18:36:11.951"></status>
+</kw>
+<kw name="Set Global Variable" library="BuiltIn">
+<doc>Makes a variable available globally in all tests and suites.</doc>
+<arguments>
+<arg>${USERS_NO}</arg>
+<arg>${current_users}</arg>
+</arguments>
+<msg timestamp="20200916 18:36:11.952" level="INFO">${USERS_NO} = 82</msg>
+<status status="PASS" starttime="20200916 18:36:11.951" endtime="20200916 18:36:11.952"></status>
+</kw>
+<status status="PASS" starttime="20200916 18:36:10.876" endtime="20200916 18:36:11.952" critical="yes"></status>
+</test>
+<test id="s1-t3" name="Test GET /api/users/memberof">
+<kw name="Create Oauth2 Session" library="auth" type="setup">
+<arguments>
+<arg>${USERS_SESSION}</arg>
+<arg>${USERNAME}</arg>
+<arg>${PASSWORD}</arg>
+</arguments>
+<kw name="Get Oauth2 Token" library="auth">
+<arguments>
+<arg>${username}</arg>
+<arg>${password}</arg>
+</arguments>
+<assign>
+<var>${token}</var>
+</assign>
+<kw name="Create Dictionary" library="BuiltIn">
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<arguments>
+<arg>Content-Type=application/x-www-form-urlencoded</arg>
+</arguments>
+<assign>
+<var>${headers}</var>
+</assign>
+<msg timestamp="20200916 18:36:11.954" level="INFO">${headers} = {'Content-Type': 'application/x-www-form-urlencoded'}</msg>
+<status status="PASS" starttime="20200916 18:36:11.954" endtime="20200916 18:36:11.954"></status>
+</kw>
+<kw name="Create Dictionary" library="BuiltIn">
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<arguments>
+<arg>username=${username}</arg>
+<arg>password=${password}</arg>
+</arguments>
+<assign>
+<var>${form_data}</var>
+</assign>
+<msg timestamp="20200916 18:36:11.954" level="INFO">${form_data} = {'username': 'zhangpeng', 'password': 'zhangpeng'}</msg>
+<status status="PASS" starttime="20200916 18:36:11.954" endtime="20200916 18:36:11.954"></status>
+</kw>
+<kw name="Create Session" library="RequestsLibrary">
+<doc>Create Session: create a HTTP session to a server</doc>
+<arguments>
+<arg>token_session</arg>
+<arg>${BACKEND}</arg>
+</arguments>
+<msg timestamp="20200916 18:36:11.955" level="INFO">Creating Session using : alias=token_session, url=http://172.16.66.6:8000, headers={},                     cookies={}, auth=None, timeout=None, proxies=None, verify=False,                     debug=0 </msg>
+<status status="PASS" starttime="20200916 18:36:11.954" endtime="20200916 18:36:11.955"></status>
+</kw>
+<kw name="Post Request" library="RequestsLibrary">
+<doc>Send a POST request on the session object found using the
+given `alias`</doc>
+<arguments>
+<arg>token_session</arg>
+<arg>${TOKEN_API}</arg>
+<arg>data=${form_data}</arg>
+<arg>headers=${headers}</arg>
+</arguments>
+<assign>
+<var>${resp}</var>
+</assign>
+<msg timestamp="20200916 18:36:12.101" level="INFO">POST Request : url=http://172.16.66.6:8000/api/token 
+ path_url=/api/token 
+ headers={'User-Agent': 'python-requests/2.24.0', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Type': 'application/x-www-form-urlencoded', 'Content-Length': '37'} 
+ body=username=zhangpeng&amp;password=zhangpeng 
+ </msg>
+<msg timestamp="20200916 18:36:12.101" level="INFO">POST Response : url=http://172.16.66.6:8000/api/token 
+ status=200, reason=OK 
+ body={"access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ6aGFuZ3BlbmciLCJleHAiOjE2MDAyNTYxNzJ9.PQvLzftScww6GHbocUTByvFMeQujp0F6ldxGHSx4a-s","token_type":"bearer","admin":true} 
+ </msg>
+<msg timestamp="20200916 18:36:12.101" level="INFO">${resp} = &lt;Response [200]&gt;</msg>
+<status status="PASS" starttime="20200916 18:36:11.955" endtime="20200916 18:36:12.101"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.loads("""${resp.text}""")</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>&amp;{data}</var>
+</assign>
+<msg timestamp="20200916 18:36:12.103" level="INFO">&amp;{data} = { access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ6aGFuZ3BlbmciLCJleHAiOjE2MDAyNTYxNzJ9.PQvLzftScww6GHbocUTByvFMeQujp0F6ldxGHSx4a-s | token_type=bearer | admin=True }</msg>
+<status status="PASS" starttime="20200916 18:36:12.102" endtime="20200916 18:36:12.103"></status>
+</kw>
+<msg timestamp="20200916 18:36:12.104" level="INFO">${token} = Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ6aGFuZ3BlbmciLCJleHAiOjE2MDAyNTYxNzJ9.PQvLzftScww6GHbocUTByvFMeQujp0F6ldxGHSx4a-s</msg>
+<status status="PASS" starttime="20200916 18:36:11.953" endtime="20200916 18:36:12.104"></status>
+</kw>
+<kw name="Create Dictionary" library="BuiltIn">
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<arguments>
+<arg>Authorization=${token}</arg>
+</arguments>
+<assign>
+<var>${headers}</var>
+</assign>
+<msg timestamp="20200916 18:36:12.105" level="INFO">${headers} = {'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ6aGFuZ3BlbmciLCJleHAiOjE2MDAyNTYxNzJ9.PQvLzftScww6GHbocUTByvFMeQujp0F6ldxGHSx4a-s'}</msg>
+<status status="PASS" starttime="20200916 18:36:12.104" endtime="20200916 18:36:12.105"></status>
+</kw>
+<kw name="Create Session" library="RequestsLibrary">
+<doc>Create Session: create a HTTP session to a server</doc>
+<arguments>
+<arg>${session_name}</arg>
+<arg>${BACKEND}</arg>
+<arg>headers=${headers}</arg>
+</arguments>
+<msg timestamp="20200916 18:36:12.106" level="INFO">Creating Session using : alias=current_session, url=http://172.16.66.6:8000, headers={'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ6aGFuZ3BlbmciLCJleHAiOjE2MDAyNTYxNzJ9.PQvLzftScww6GHbocUTByvFMeQujp0F6ldxGHSx4a-s'},                     cookies={}, auth=None, timeout=None, proxies=None, verify=False,                     debug=0 </msg>
+<status status="PASS" starttime="20200916 18:36:12.105" endtime="20200916 18:36:12.107"></status>
+</kw>
+<status status="PASS" starttime="20200916 18:36:11.953" endtime="20200916 18:36:12.107"></status>
+</kw>
+<kw name="Get Request" library="RequestsLibrary">
+<doc>Send a GET request on the session object found using the
+given `alias`</doc>
+<arguments>
+<arg>${USERS_SESSION}</arg>
+<arg>/api/users/memberof</arg>
+</arguments>
+<assign>
+<var>${resp}</var>
+</assign>
+<msg timestamp="20200916 18:36:12.217" level="INFO">GET Request : url=http://172.16.66.6:8000/api/users/memberof 
+ path_url=/api/users/memberof 
+ headers={'User-Agent': 'python-requests/2.24.0', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ6aGFuZ3BlbmciLCJleHAiOjE2MDAyNTYxNzJ9.PQvLzftScww6GHbocUTByvFMeQujp0F6ldxGHSx4a-s'} 
+ body=None 
+ </msg>
+<msg timestamp="20200916 18:36:12.222" level="INFO">GET Response : url=http://172.16.66.6:8000/api/users/memberof 
+ status=200, reason=OK 
+ body=[{"group":"admin","pgroup":"jenkins"},{"group":"user","pgroup":"jenkins"},{"group":"user","pgroup":"qa_jenkins"},{"group":"admin","pgroup":"qa_jenkins"},{"group":"jira-managers","pgroup":"jira"},{"group":"运维","pgroup":"xl"},{"group":"全员","pgroup":"xl"},{"group":"项目实施部","pgroup":"xl"}] 
+ </msg>
+<msg timestamp="20200916 18:36:12.222" level="INFO">${resp} = &lt;Response [200]&gt;</msg>
+<status status="PASS" starttime="20200916 18:36:12.108" endtime="20200916 18:36:12.222"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.loads("""${resp.text}""")</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>@{data}</var>
+</assign>
+<msg timestamp="20200916 18:36:12.226" level="INFO">@{data} = [ {'group': 'admin', 'pgroup': 'jenkins'} | {'group': 'user', 'pgroup': 'jenkins'} | {'group': 'user', 'pgroup': 'qa_jenkins'} | {'group': 'admin', 'pgroup': 'qa_jenkins'} | {'group': 'jira-managers',...</msg>
+<status status="PASS" starttime="20200916 18:36:12.223" endtime="20200916 18:36:12.226"></status>
+</kw>
+<kw name="Should Not Be Empty" library="BuiltIn">
+<doc>Verifies that the given item is not empty.</doc>
+<arguments>
+<arg>${data}</arg>
+</arguments>
+<msg timestamp="20200916 18:36:12.227" level="INFO">Length is 8</msg>
+<status status="PASS" starttime="20200916 18:36:12.227" endtime="20200916 18:36:12.227"></status>
+</kw>
+<status status="PASS" starttime="20200916 18:36:11.952" endtime="20200916 18:36:12.227" critical="yes"></status>
+</test>
+<test id="s1-t4" name="Test POST /api/users{userid}">
+<kw name="Create Oauth2 Session" library="auth" type="setup">
+<arguments>
+<arg>${USERS_SESSION}</arg>
+<arg>${USERNAME}</arg>
+<arg>${PASSWORD}</arg>
+</arguments>
+<kw name="Get Oauth2 Token" library="auth">
+<arguments>
+<arg>${username}</arg>
+<arg>${password}</arg>
+</arguments>
+<assign>
+<var>${token}</var>
+</assign>
+<kw name="Create Dictionary" library="BuiltIn">
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<arguments>
+<arg>Content-Type=application/x-www-form-urlencoded</arg>
+</arguments>
+<assign>
+<var>${headers}</var>
+</assign>
+<msg timestamp="20200916 18:36:12.230" level="INFO">${headers} = {'Content-Type': 'application/x-www-form-urlencoded'}</msg>
+<status status="PASS" starttime="20200916 18:36:12.229" endtime="20200916 18:36:12.230"></status>
+</kw>
+<kw name="Create Dictionary" library="BuiltIn">
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<arguments>
+<arg>username=${username}</arg>
+<arg>password=${password}</arg>
+</arguments>
+<assign>
+<var>${form_data}</var>
+</assign>
+<msg timestamp="20200916 18:36:12.230" level="INFO">${form_data} = {'username': 'zhangpeng', 'password': 'zhangpeng'}</msg>
+<status status="PASS" starttime="20200916 18:36:12.230" endtime="20200916 18:36:12.230"></status>
+</kw>
+<kw name="Create Session" library="RequestsLibrary">
+<doc>Create Session: create a HTTP session to a server</doc>
+<arguments>
+<arg>token_session</arg>
+<arg>${BACKEND}</arg>
+</arguments>
+<msg timestamp="20200916 18:36:12.231" level="INFO">Creating Session using : alias=token_session, url=http://172.16.66.6:8000, headers={},                     cookies={}, auth=None, timeout=None, proxies=None, verify=False,                     debug=0 </msg>
+<status status="PASS" starttime="20200916 18:36:12.230" endtime="20200916 18:36:12.231"></status>
+</kw>
+<kw name="Post Request" library="RequestsLibrary">
+<doc>Send a POST request on the session object found using the
+given `alias`</doc>
+<arguments>
+<arg>token_session</arg>
+<arg>${TOKEN_API}</arg>
+<arg>data=${form_data}</arg>
+<arg>headers=${headers}</arg>
+</arguments>
+<assign>
+<var>${resp}</var>
+</assign>
+<msg timestamp="20200916 18:36:12.374" level="INFO">POST Request : url=http://172.16.66.6:8000/api/token 
+ path_url=/api/token 
+ headers={'User-Agent': 'python-requests/2.24.0', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Type': 'application/x-www-form-urlencoded', 'Content-Length': '37'} 
+ body=username=zhangpeng&amp;password=zhangpeng 
+ </msg>
+<msg timestamp="20200916 18:36:12.375" level="INFO">POST Response : url=http://172.16.66.6:8000/api/token 
+ status=200, reason=OK 
+ body={"access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ6aGFuZ3BlbmciLCJleHAiOjE2MDAyNTYxNzJ9.PQvLzftScww6GHbocUTByvFMeQujp0F6ldxGHSx4a-s","token_type":"bearer","admin":true} 
+ </msg>
+<msg timestamp="20200916 18:36:12.375" level="INFO">${resp} = &lt;Response [200]&gt;</msg>
+<status status="PASS" starttime="20200916 18:36:12.231" endtime="20200916 18:36:12.375"></status>
+</kw>
+<kw name="Evaluate" library="BuiltIn">
+<doc>Evaluates the given expression in Python and returns the result.</doc>
+<arguments>
+<arg>json.loads("""${resp.text}""")</arg>
+<arg>json</arg>
+</arguments>
+<assign>
+<var>&amp;{data}</var>
+</assign>
+<msg timestamp="20200916 18:36:12.377" level="INFO">&amp;{data} = { access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ6aGFuZ3BlbmciLCJleHAiOjE2MDAyNTYxNzJ9.PQvLzftScww6GHbocUTByvFMeQujp0F6ldxGHSx4a-s | token_type=bearer | admin=True }</msg>
+<status status="PASS" starttime="20200916 18:36:12.375" endtime="20200916 18:36:12.377"></status>
+</kw>
+<msg timestamp="20200916 18:36:12.378" level="INFO">${token} = Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ6aGFuZ3BlbmciLCJleHAiOjE2MDAyNTYxNzJ9.PQvLzftScww6GHbocUTByvFMeQujp0F6ldxGHSx4a-s</msg>
+<status status="PASS" starttime="20200916 18:36:12.229" endtime="20200916 18:36:12.378"></status>
+</kw>
+<kw name="Create Dictionary" library="BuiltIn">
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<arguments>
+<arg>Authorization=${token}</arg>
+</arguments>
+<assign>
+<var>${headers}</var>
+</assign>
+<msg timestamp="20200916 18:36:12.379" level="INFO">${headers} = {'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ6aGFuZ3BlbmciLCJleHAiOjE2MDAyNTYxNzJ9.PQvLzftScww6GHbocUTByvFMeQujp0F6ldxGHSx4a-s'}</msg>
+<status status="PASS" starttime="20200916 18:36:12.378" endtime="20200916 18:36:12.379"></status>
+</kw>
+<kw name="Create Session" library="RequestsLibrary">
+<doc>Create Session: create a HTTP session to a server</doc>
+<arguments>
+<arg>${session_name}</arg>
+<arg>${BACKEND}</arg>
+<arg>headers=${headers}</arg>
+</arguments>
+<msg timestamp="20200916 18:36:12.380" level="INFO">Creating Session using : alias=current_session, url=http://172.16.66.6:8000, headers={'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ6aGFuZ3BlbmciLCJleHAiOjE2MDAyNTYxNzJ9.PQvLzftScww6GHbocUTByvFMeQujp0F6ldxGHSx4a-s'},                     cookies={}, auth=None, timeout=None, proxies=None, verify=False,                     debug=0 </msg>
+<status status="PASS" starttime="20200916 18:36:12.379" endtime="20200916 18:36:12.380"></status>
+</kw>
+<status status="PASS" starttime="20200916 18:36:12.228" endtime="20200916 18:36:12.381"></status>
+</kw>
+<kw name="Create Dictionary" library="BuiltIn">
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<arguments>
+<arg>Content-Type=application/json</arg>
+</arguments>
+<assign>
+<var>&amp;{headers}</var>
+</assign>
+<msg timestamp="20200916 18:36:12.382" level="INFO">&amp;{headers} = { Content-Type=application/json }</msg>
+<status status="PASS" starttime="20200916 18:36:12.381" endtime="20200916 18:36:12.382"></status>
+</kw>
+<kw name="Create Dictionary" library="BuiltIn">
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<arguments>
+<arg>cn=张三</arg>
+<arg>sn=张</arg>
+<arg>givenName=三</arg>
+<arg>admin=False</arg>
+<arg>accountType=user</arg>
+</arguments>
+<assign>
+<var>&amp;{user}</var>
+</assign>
+<msg timestamp="20200916 18:36:12.383" level="INFO">&amp;{user} = { cn=张三 | sn=张 | givenName=三 | admin=False | accountType=user }</msg>
+<status status="PASS" starttime="20200916 18:36:12.382" endtime="20200916 18:36:12.383"></status>
+</kw>
+<kw name="Post Request" library="RequestsLibrary">
+<doc>Send a POST request on the session object found using the
+given `alias`</doc>
+<arguments>
+<arg>${USERS_SESSION}</arg>
+<arg>/api/users/zhangsan</arg>
+<arg>data=${user}</arg>
+<arg>headers=${headers}</arg>
+</arguments>
+<assign>
+<var>${resp}</var>
+</assign>
+<msg timestamp="20200916 18:36:12.656" level="INFO">POST Request : url=http://172.16.66.6:8000/api/users/zhangsan 
+ path_url=/api/users/zhangsan 
+ headers={'User-Agent': 'python-requests/2.24.0', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ6aGFuZ3BlbmciLCJleHAiOjE2MDAyNTYxNzJ9.PQvLzftScww6GHbocUTByvFMeQujp0F6ldxGHSx4a-s', 'Content-Type': 'application/json', 'Content-Length': '102'} 
+ body={"cn": "\u5f20\u4e09", "sn": "\u5f20", "givenName": "\u4e09", "admin": "False", "accountType": "user"} 
+ </msg>
+<msg timestamp="20200916 18:36:12.657" level="INFO">POST Response : url=http://172.16.66.6:8000/api/users/zhangsan 
+ status=462, reason= 
+ body={"detail":"Entry already exists"} 
+ </msg>
+<msg timestamp="20200916 18:36:12.657" level="INFO">${resp} = &lt;Response [462]&gt;</msg>
+<status status="PASS" starttime="20200916 18:36:12.384" endtime="20200916 18:36:12.657"></status>
+</kw>
+<kw name="Log" library="BuiltIn">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>${resp}</arg>
+</arguments>
+<msg timestamp="20200916 18:36:12.658" level="INFO">&lt;Response [462]&gt;</msg>
+<status status="PASS" starttime="20200916 18:36:12.658" endtime="20200916 18:36:12.658"></status>
+</kw>
+<status status="PASS" starttime="20200916 18:36:12.228" endtime="20200916 18:36:12.659" critical="yes"></status>
+</test>
+<status status="PASS" starttime="20200916 18:36:10.448" endtime="20200916 18:36:12.660"></status>
+</suite>
+<statistics>
+<total>
+<stat pass="4" fail="0">Critical Tests</stat>
+<stat pass="4" fail="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat pass="4" fail="0" id="s1" name="Users">Users</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
