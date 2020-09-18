@@ -19,33 +19,33 @@ ${NEW_PASSWORD}     P@ssw0rd
 #     &{result}=      HTTP Request    method=GET  api=/api/users/me   session=${USERS_SESSION}
 #     Log     ${result}
 
-Test GET /api/users/me
+[GET] /api/users/me
     ${resp}=    Get Request     ${USERS_SESSION}     /api/users/me
     &{data}=    evaluate    json.loads("""${resp.text}""")   json
     Log     ${data.uid}
     Should Be Equal     ${data.uid}     ${USERNAME}
 
-Test GET /api/users
+[GET] /api/users
     ${resp}=    Get Request     ${USERS_SESSION}     /api/users
     @{data}=    evaluate    json.loads("""${resp.text}""")   json
     ${current_users}=   Get Length  ${data}
     Set Global Variable     ${USERS_NO}     ${current_users}
 
-Test GET /api/users/memberof
+[GET] /api/users/memberof
     ${resp}=    Get Request     ${USERS_SESSION}     /api/users/memberof
     @{data}=    evaluate    json.loads("""${resp.text}""")   json
     Log     ${data}
     Should Not Be Empty     ${data}
 
 
-Test POST /api/users/{userid}
+[POST] /api/users/{userid}
     # Delete user in case user exists
     Delete User     ${TEST_USER}
 
     ${result}=  Create User     ${TEST_USER}
     Status Should Be    200     ${result}
 
-Test GET /api/users/{userid}
+[GET] /api/users/{userid}
     &{user}=    Get User  ${TEST_USER}
     Log     ${user.uid}
     Should Be Equal     ${user.uid}     ${TEST_USER}
@@ -55,7 +55,7 @@ Check Users Number
     ${tmp}=     Evaluate    ${USERS_NO} + 1
     Should Be Equal     ${current_user_no}  ${tmp}
 
-Test PUT /api/users/{userid}
+[PUT] /api/users/{userid}
     &{headers}=     Create Dictionary   Content-Type=application/json
     &{user}=    Create Dictionary   cn=zhangsan     sn=张    givenName=三   admin=False
 
@@ -67,8 +67,7 @@ Check User Attribute
     Log     ${user.cn}
     Should Be Equal     ${user.cn}  zhangsan
 
-
-Test PUT /api/users/{userid}/lock
+[PUT] /api/users/{userid}/lock
     ${resp}=    Put Request     ${USERS_SESSION}     /api/users/${TEST_USER}/lock
     Status Should Be    200     ${resp}
 
@@ -78,7 +77,7 @@ Check User Lock
     Log     ${user.accountStatus}
     Should Be Equal     ${user.accountStatus}   inactive
 
-Test PUT /api/users/{userid}/unlock
+[PUT] /api/users/{userid}/unlock
     ${resp}=    Put Request     ${USERS_SESSION}     /api/users/${TEST_USER}/unlock
     Status Should Be    200     ${resp}
 
@@ -88,7 +87,7 @@ Check User Unlock
     Log     ${user.accountStatus}
     Should Be Equal     ${user.accountStatus}   active
 
-Test PUT /api/users/password
+[PUT] /api/users/password
     &{headers}=     Create Dictionary   Content-Type=application/json
     &{password_update}=    Create Dictionary   old_password=${PASSWORD}  new_password=${NEW_PASSWORD}
 
@@ -109,7 +108,7 @@ Revert Passwod
     ${resp}=    Put Request    ${USERS_SESSION}    /api/users/password   data=${password_update}    headers=${headers}
     Status Should Be    200     ${resp}
 
-Test PUT /api/users/{userid}/password/reset
+[PUT] /api/users/{userid}/password/reset
     ${resp}=    Put Request    ${USERS_SESSION}    /api/users/${TEST_USER}/password/reset
     Status Should Be    200     ${resp}
 
