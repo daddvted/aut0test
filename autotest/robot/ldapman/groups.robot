@@ -4,33 +4,82 @@ Library     RequestsLibrary
 
 Resource    common.robot
 
-Suite Setup      Create Oauth2 Session   ${USERS_SESSION}     ${USERNAME}     ${PASSWORD}
-# Suite Teardown   Delete User  ${TEST_USER}
+Suite Setup      Create Oauth2 Session      ${SESSION}      ${USERNAME}     ${PASSWORD}
+Suite Teardown   Delete User    ${SESSION}  ${TEST_USER}
 
 *** Variables ***
-${USERNAME}         zhangpeng
-${PASSWORD}         zhangpeng
-${USERS_SESSION}    current_session
-${TEST_GROUP}       car
+${USERNAME}             zhangpeng
+${PASSWORD}             zhangpeng
+${SESSION}              current_session
+${TEST_USER}            lisi
+${TEST_GROUP}           car
+${TEST_DESC}            CAR
+${TEST_SUBGROUP}        audi
+${TEST_SUBGROUP_DESC}   AUDI
 
 *** Test Cases ***
-# Debug
-#     &{result}=      HTTP Request    method=GET  api=/api/users/me   session=${USERS_SESSION}
-#     Log     ${result}
-
-[GET] /api/groups
-    ${resp}=    Get Request     ${USERS_SESSION}     /api/groups
-    @{data}=    evaluate    json.loads("""${resp.text}""")   json
-    Should Not Be Empty     ${data}
-
 [GET] /api/groups/tree
-    ${resp}=    Get Request     ${USERS_SESSION}     /api/groups/tree
+    ${resp}=    Get Request     ${SESSION}     /api/groups/tree
     @{data}=    evaluate    json.loads("""${resp.text}""")   json
     Should Not Be Empty     ${data}
+
+[POST] /api/groups/{group}
+    # Delete Group  ${SESSION}    ${TEST_GROUP}
+    &{headers}=     Create Dictionary   Content-Type=application/json
+    &{group}=   Create Dictionary  ou=${TEST_GROUP}     description=汽车
+    ${resp}=    Post Request    ${SESSION}  /api/groups/${TEST_GROUP}    data=${group}   headers=${headers}
+    Status Should Be    200     ${resp}
+
+[GET] /api/groups/{group}
+    ${resp}=    Get Request     ${SESSION}      /api/groups/${TEST_GROUP}
+    Status Should Be    200     ${resp}
+
+[PUT] /api/groups/{group}
+    &{headers}=     Create Dictionary   Content-Type=application/json
+    &{update}=   Create Dictionary   description=${TEST_DESC}
+    ${resp}=    Put Request    ${SESSION}  /api/groups/${TEST_GROUP}    data=${update}   headers=${headers}
+    Status Should Be    200     ${resp}
+
+[GET] /api/groups/
+    ${resp}=    Get Request     ${SESSION}     /api/groups/
+    @{data}=    evaluate    json.loads("""${resp.text}""")   json
+    ${len}=     Get Length  ${data}
+    FOR     ${grp}      IN      @{data}
+        &{g}=   Convert To Dictionary   ${grp}
+        Pass Execution If   '${TEST_DESC}' == '${g.description}'    Bingo
+    END
+    FAIL    Group update failed
+
+Create test user
+    &{user}=    Create Dictionary   cn=李四     sn=李    givenName=四   admin=False     accountType=user
+    Create User     ${SESSION}      ${TEST_USER}    &{user}
+
+[POST] /api/groups/{group}/{subgroup}
+    &{headers}=     Create Dictionary   Content-Type=application/json
+    &{subgroup}=    Create Dictionary   cn=${TEST_GROUP}     description=奥迪
+    ${resp}=    Post Request    ${SESSION}  /api/groups/${TEST_GROUP}/${TEST_SUBGROUP}    data=${subgroup}   headers=${headers}
+    Status Should Be    200     ${resp}
+
+[GET] /api/groups/{group}/{subgroup}/member
+    ${resp}=    Get Request     ${SESSION}     /api/groups/${TEST_GROUP}
+    @{data}=    evaluate    json.loads("""${resp.text}""")   json
+
+
+
+[DELETE] /api/groups/{group}/{subgroup}
+    ${resp}=    Delete Request  ${SESSION}  /api/groups/${TEST_GROUP}/${TEST_SUBGROUP}
+    Status Should Be    200     ${resp}
+
+
+[DELETE] /api/groups/{group}
+    ${resp}=    Delete Request  ${SESSION}  /api/groups/${TEST_GROUP}
+    Status Should Be    200     ${resp}
+
+
 
 
 # [GET] /api/users/memberof
-#     ${resp}=    Get Request     ${USERS_SESSION}     /api/users/memberof
+#     ${resp}=    Get Request     ${SESSION}     /api/users/memberof
 #     @{data}=    evaluate    json.loads("""${resp.text}""")   json
 #     Log     ${data}
 #     Should Not Be Empty     ${data}
@@ -57,7 +106,7 @@ ${TEST_GROUP}       car
 #     &{headers}=     Create Dictionary   Content-Type=application/json
 #     &{user}=    Create Dictionary   cn=zhangsan     sn=张    givenName=三   admin=False
 
-#     ${resp}=    Put Request    ${USERS_SESSION}    /api/users/${TEST_USER}   data=${user}    headers=${headers}
+#     ${resp}=    Put Request    ${SESSION}    /api/users/${TEST_USER}   data=${user}    headers=${headers}
 #     Status Should Be    200     ${resp}
 
 # Check User Attribute
@@ -66,7 +115,7 @@ ${TEST_GROUP}       car
 #     Should Be Equal     ${user.cn}  zhangsan
 
 # [PUT] /api/users/{userid}/lock
-#     ${resp}=    Put Request     ${USERS_SESSION}     /api/users/${TEST_USER}/lock
+#     ${resp}=    Put Request     ${SESSION}     /api/users/${TEST_USER}/lock
 #     Status Should Be    200     ${resp}
 
 # Check User Lock
@@ -76,7 +125,7 @@ ${TEST_GROUP}       car
 #     Should Be Equal     ${user.accountStatus}   inactive
 
 # [PUT] /api/users/{userid}/unlock
-#     ${resp}=    Put Request     ${USERS_SESSION}     /api/users/${TEST_USER}/unlock
+#     ${resp}=    Put Request     ${SESSION}     /api/users/${TEST_USER}/unlock
 #     Status Should Be    200     ${resp}
 
 # Check User Unlock
@@ -89,7 +138,7 @@ ${TEST_GROUP}       car
 #     &{headers}=     Create Dictionary   Content-Type=application/json
 #     &{password_update}=    Create Dictionary   old_password=${PASSWORD}  new_password=${NEW_PASSWORD}
 
-#     ${resp}=    Put Request    ${USERS_SESSION}    /api/users/password   data=${password_update}    headers=${headers}
+#     ${resp}=    Put Request    ${SESSION}    /api/users/password   data=${password_update}    headers=${headers}
 #     Status Should Be    200     ${resp}
 
 # Verify Password
@@ -103,11 +152,11 @@ ${TEST_GROUP}       car
 #     &{headers}=     Create Dictionary   Content-Type=application/json
 #     &{password_update}=    Create Dictionary   old_password=${NEW_PASSWORD}  new_password=${PASSWORD}
 
-#     ${resp}=    Put Request    ${USERS_SESSION}    /api/users/password   data=${password_update}    headers=${headers}
+#     ${resp}=    Put Request    ${SESSION}    /api/users/password   data=${password_update}    headers=${headers}
 #     Status Should Be    200     ${resp}
 
 # [PUT] /api/users/{userid}/password/reset
-#     ${resp}=    Put Request    ${USERS_SESSION}    /api/users/${TEST_USER}/password/reset
+#     ${resp}=    Put Request    ${SESSION}    /api/users/${TEST_USER}/password/reset
 #     Status Should Be    200     ${resp}
 
 # Verify User Password
@@ -126,24 +175,24 @@ ${TEST_GROUP}       car
 #     &{headers}=     Create Dictionary   Content-Type=application/json
 #     &{user}=    Create Dictionary   cn=张三     sn=张    givenName=三   admin=False     accountType=user
 
-#     ${resp}=    Post Request    ${USERS_SESSION}    /api/users/${uid}   data=${user}    headers=${headers}
+#     ${resp}=    Post Request    ${SESSION}    /api/users/${uid}   data=${user}    headers=${headers}
 #     [Return]    ${resp}
 
 # Get User
 #     [Arguments]     ${uid}
-#     ${resp}=    Get Request     ${USERS_SESSION}     /api/users/${uid}
+#     ${resp}=    Get Request     ${SESSION}     /api/users/${uid}
 #     &{data}=    evaluate    json.loads("""${resp.text}""")   json
 #     [Return]    &{data}
 
-Delete User
-    [Arguments]     ${uid}
-    Log     ${uid}
-    ${resp}=    Delete Request      ${USERS_SESSION}    /api/users/${uid}
-    # Status Should Be    200     ${resp}
+# Delete User
+#     [Arguments]     ${uid}
+#     Log     ${uid}
+#     ${resp}=    Delete Request      ${SESSION}    /api/users/${uid}
+#     # Status Should Be    200     ${resp}
 
 
 # Get Users No
-#     ${resp}=    Get Request     ${USERS_SESSION}     /api/users
+#     ${resp}=    Get Request     ${SESSION}     /api/users
 #     @{data}=    evaluate    json.loads("""${resp.text}""")   json
 #     ${current_users}=   Get Length  ${data}
 #     [Return]    ${current_users}
