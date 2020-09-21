@@ -30,9 +30,9 @@ ${TEST_SUBGROUP_DESC}   AUDI
     ${resp}=    Post Request    ${SESSION}  /api/groups/${TEST_GROUP}    data=${group}   headers=${headers}
     Status Should Be    200     ${resp}
 
-[GET] /api/groups/{group}
-    ${resp}=    Get Request     ${SESSION}      /api/groups/${TEST_GROUP}
-    Status Should Be    200     ${resp}
+# [GET] /api/groups/{group}
+#     ${resp}=    Get Request     ${SESSION}      /api/groups/${TEST_GROUP}
+#     Status Should Be    200     ${resp}
 
 [PUT] /api/groups/{group}
     &{headers}=     Create Dictionary   Content-Type=application/json
@@ -54,16 +54,43 @@ Create test user
     &{user}=    Create Dictionary   cn=李四     sn=李    givenName=四   admin=False     accountType=user
     Create User     ${SESSION}      ${TEST_USER}    &{user}
 
+
 [POST] /api/groups/{group}/{subgroup}
     &{headers}=     Create Dictionary   Content-Type=application/json
     &{subgroup}=    Create Dictionary   cn=${TEST_GROUP}     description=奥迪
     ${resp}=    Post Request    ${SESSION}  /api/groups/${TEST_GROUP}/${TEST_SUBGROUP}    data=${subgroup}   headers=${headers}
     Status Should Be    200     ${resp}
 
+
+[GET] /api/groups/{group}
+    ${resp}=    Get Request     ${SESSION}     /api/groups/${TEST_GROUP}
+    @{data}=    evaluate    json.loads("""${resp.text}""")   json
+    Log     ${data}
+    Length Should Be     ${data}     1
+
+
+[PUT] /api/groups/{group}/{subgroup}
+    &{headers}=     Create Dictionary   Content-Type=application/json
+    &{update}=   Create Dictionary   description=${TEST_SUBGROUP_DESC}
+    ${resp}=    Put Request    ${SESSION}  /api/groups/${TEST_GROUP}/${TEST_SUBGROUP}    data=${update}   headers=${headers}
+    Status Should Be    200     ${resp}
+
+
+[GET] /api/groups/{group}/{subgroup}
+    ${resp}=    Get Request     ${SESSION}     /api/groups/${TEST_GROUP}/${TEST_SUBGROUP}
+    &{data}=    evaluate    json.loads("""${resp.text}""")   json
+    Log     ${data.cn}
+    Should Be Equal      ${data.cn}      ${TEST_SUBGROUP}
+
+
+
+
+
+
+
 [GET] /api/groups/{group}/{subgroup}/member
     ${resp}=    Get Request     ${SESSION}     /api/groups/${TEST_GROUP}
     @{data}=    evaluate    json.loads("""${resp.text}""")   json
-
 
 
 [DELETE] /api/groups/{group}/{subgroup}

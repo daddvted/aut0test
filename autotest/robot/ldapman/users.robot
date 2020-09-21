@@ -29,9 +29,10 @@ ${NEW_PASSWORD}     P@ssw0rd
 [GET] /api/users/
     ${resp}=    Get Request     ${SESSION}     /api/users/
     @{data}=    evaluate    json.loads("""${resp.text}""")   json
-    ${current_users}=   Get Length  ${data}
-    Log     ${current_users}
-    Set Global Variable     ${USERS_NO}     ${current_users}
+    # ${current_users}=   Get Length  ${data}
+    # Log     ${current_users}
+    Should Not Be Empty      ${data}
+    # Set Global Variable     ${USERS_NO}     ${current_users}
 
 
 [GET] /api/users/memberof
@@ -56,11 +57,11 @@ ${NEW_PASSWORD}     P@ssw0rd
     Should Be Equal     ${user.uid}     ${TEST_USER}
 
 
-Check Users Number
-    ${current_user_no}=     Get Users Number  ${SESSION}
-    Log     ${current_user_no}
-    ${tmp}=     Evaluate    ${USERS_NO} + 1
-    Should Be Equal     ${current_user_no}  ${tmp}
+# Check Users Number
+#     ${current_user_no}=     Get Users Number  ${SESSION}
+#     Log     ${current_user_no}
+#     ${tmp}=     Evaluate    ${USERS_NO} + 1
+#     Should Be Equal     ${current_user_no}  ${tmp}
 
 
 [PUT] /api/users/{userid}
